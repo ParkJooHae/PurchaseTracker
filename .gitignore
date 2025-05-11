@@ -1,0 +1,39 @@
+# Android Studio
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+local.properties
+
+# Kotlin
+*.class
+*.jar
+*.war
+*.ear
+
+# Log, crash, etc.
+*.log
+
+# OS, IDE, etc.
+.DS_Store
+Thumbs.db
+
+# Git
+*.swp
+*.swo
+
+# Generated files
+/captures/
+/output.json
+
+# Android specific
+*.apk
+*.ap_
+/app/build/
+/app/release/
+/app/debug/
+/app/generated/
+/*.keystore
