@@ -130,6 +130,7 @@ dependencies {
 
     // Hilt - 의존성 주입 프레임워크
     implementation(libs.hilt.android)
+    implementation(libs.androidx.room.common.jvm)
     kapt(libs.hilt.compiler) // 어노테이션 프로세싱을 위한 컴파일러
     implementation(libs.hilt.navigation.compose) // Compose와 Hilt 통합
 
