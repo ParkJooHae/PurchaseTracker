@@ -10,7 +10,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 
     // Kotlin 어노테이션 프로세싱을 위한 플러그인 (Room, Hilt 등에 필요)
-    alias(libs.plugins.kotlin.kapt)
+//    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 
     // Kotlin 직렬화/역직렬화 라이브러리를 사용하기 위한 플러그인
     alias(libs.plugins.kotlin.serialization)
@@ -131,13 +132,13 @@ dependencies {
     // Hilt - 의존성 주입 프레임워크
     implementation(libs.hilt.android)
     implementation(libs.androidx.room.common.jvm)
-    kapt(libs.hilt.compiler) // 어노테이션 프로세싱을 위한 컴파일러
+    ksp(libs.hilt.compiler) // 어노테이션 프로세싱을 위한 컴파일러
     implementation(libs.hilt.navigation.compose) // Compose와 Hilt 통합
 
     // Room - 로컬 데이터베이스
     implementation(libs.room.runtime) // Room 기본 라이브러리
     implementation(libs.room.ktx) // Kotlin 확장 기능
-    kapt(libs.room.compiler) // 어노테이션 프로세싱을 위한 컴파일러
+    ksp(libs.room.compiler) // 어노테이션 프로세싱을 위한 컴파일러
 
     // DataStore - 설정 및 데이터 저장
     implementation(libs.datastore.preferences)
