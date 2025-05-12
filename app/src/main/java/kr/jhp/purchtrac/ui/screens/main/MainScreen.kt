@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kr.jhp.purchtrac.ui.navigation.Screen
+import kr.jhp.purchtrac.ui.screens.memo.detail.MemoDetailScreen
 import kr.jhp.purchtrac.ui.screens.memo.list.MemoListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,10 +90,10 @@ fun MainScreen() {
                 )
             ) { backStackEntry ->
                 val memoId = backStackEntry.arguments?.getLong("memoId") ?: -1L
-//                MemoDetailScreen(
-//                    memoId = if (memoId == -1L) null else memoId,
-//                    navigateBack = { navController.popBackStack() }
-//                )
+                MemoDetailScreen(
+                    memoId = if (memoId == -1L) null else memoId,
+                    navigateBack = { navController.popBackStack() }
+                )
             }
 
             // 예약 구매 목록 화면

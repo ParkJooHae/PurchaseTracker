@@ -162,6 +162,8 @@ dependencies {
     // 생체 인증 기능
     implementation(libs.biometric)
 
+    implementation(libs.material.icons.extended)
+
     // === 테스트 의존성 ===
 
     // JUnit - 단위 테스트 프레임워크

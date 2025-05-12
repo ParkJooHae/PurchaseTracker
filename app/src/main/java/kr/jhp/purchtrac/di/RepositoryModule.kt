@@ -6,6 +6,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kr.jhp.purchtrac.domain.repository.MemoRepository
 import kr.jhp.purchtrac.domain.repository.MemoRepositoryImpl
+import kr.jhp.purchtrac.domain.repository.UserRepository
+import kr.jhp.purchtrac.domain.repository.UserRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -15,6 +17,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindMemoRepository(memoRepositoryImpl: MemoRepositoryImpl): MemoRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
 
 //    @Binds
 //    @Singleton
