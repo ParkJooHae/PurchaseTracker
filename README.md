@@ -32,8 +32,3 @@ UI 레이어
 알림 및 백그라운드 작업
 * WorkManager: 예약 발매일 체크 및 알림 예약
 * NotificationManager: 알림 표시
-
-보안
-* Crypto: 민감한 계정 정보 암호화
-* Biometric Auth: 생체 인증 통합
-* KeyStore: 암호화 키 안전 저장
