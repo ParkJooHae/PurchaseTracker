@@ -13,6 +13,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kr.jhp.purchtrac.ui.navigation.Screen
+import kr.jhp.purchtrac.ui.screens.account.detail.AccountDetailScreen
+import kr.jhp.purchtrac.ui.screens.account.list.AccountListScreen
 import kr.jhp.purchtrac.ui.screens.memo.detail.MemoDetailScreen
 import kr.jhp.purchtrac.ui.screens.memo.list.MemoListScreen
 
@@ -123,13 +125,13 @@ fun MainScreen() {
 
             // 계정 목록 화면
             composable(Screen.AccountList.route) {
-//                AccountListScreen(
-//                    navigateToAccountDetail = { accountId ->
-//                        navController.navigate(
-//                            Screen.AccountDetail.createRoute(accountId ?: -1L)
-//                        )
-//                    }
-//                )
+                AccountListScreen(
+                    navigateToAccountDetail = { accountId ->
+                        navController.navigate(
+                            Screen.AccountDetail.createRoute(accountId ?: -1L)
+                        )
+                    }
+                )
             }
 
             // 계정 상세 화면
@@ -140,10 +142,10 @@ fun MainScreen() {
                 )
             ) { backStackEntry ->
                 val accountId = backStackEntry.arguments?.getLong("accountId") ?: -1L
-//                AccountDetailScreen(
-//                    accountId = if (accountId == -1L) null else accountId,
-//                    navigateBack = { navController.popBackStack() }
-//                )
+                AccountDetailScreen(
+                    accountId = if (accountId == -1L) null else accountId,
+                    navigateBack = { navController.popBackStack() }
+                )
             }
         }
     }

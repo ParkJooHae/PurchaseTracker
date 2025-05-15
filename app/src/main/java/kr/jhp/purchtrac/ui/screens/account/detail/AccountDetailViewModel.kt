@@ -54,7 +54,6 @@ class AccountDetailViewModel @Inject constructor(
             is AccountDetailIntent.UpdateUsername -> updateUsername(intent.username)
             is AccountDetailIntent.UpdatePassword -> updatePassword(intent.password)
             is AccountDetailIntent.UpdateNotes -> updateNotes(intent.notes)
-            is AccountDetailIntent.TogglePasswordVisibility -> togglePasswordVisibility()
             is AccountDetailIntent.SaveAccount -> saveAccount()
             is AccountDetailIntent.DeleteAccount -> deleteAccount()
         }
@@ -125,17 +124,13 @@ class AccountDetailViewModel @Inject constructor(
         _state.update { it.copy(notes = notes) }
     }
 
-    private fun togglePasswordVisibility() {
-        _state.update { it.copy(passwordVisible = !it.passwordVisible) }
-    }
-
     private fun saveAccount() {
         val currentState = _state.value
 
-        // 필수 필드 검증
+        // 필수 입력값 확인
         if (currentState.siteName.isBlank() || currentState.username.isBlank() || currentState.password.isBlank()) {
             viewModelScope.launch {
-                _event.emit(AccountDetailEvent.ShowToast("사이트 이름, 사용자 이름, 비밀번호는 필수 입력사항입니다"))
+                _event.emit(AccountDetailEvent.ShowToast("사이트 이름, 사용자 이름, 비밀번호는 필수 입력 항목입니다"))
             }
             return
         }
@@ -151,7 +146,7 @@ class AccountDetailViewModel @Inject constructor(
                     siteUrl = currentState.siteUrl,
                     username = currentState.username,
                     password = currentState.password,
-                    notes = if (currentState.notes.isBlank()) null else currentState.notes
+                    notes = currentState.notes.ifBlank { null }
                 )
 
                 val savedId = saveAccountUseCase(account)

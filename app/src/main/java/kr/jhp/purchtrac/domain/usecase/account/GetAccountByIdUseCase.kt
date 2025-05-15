@@ -1,6 +1,7 @@
 package kr.jhp.purchtrac.domain.usecase.account
 
 import kr.jhp.purchtrac.domain.model.Account
+import kr.jhp.purchtrac.domain.repository.AccountRepository
 import javax.inject.Inject
 
 class GetAccountByIdUseCase @Inject constructor(

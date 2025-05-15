@@ -4,6 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kr.jhp.purchtrac.domain.repository.AccountRepository
+import kr.jhp.purchtrac.domain.repository.AccountRepositoryImpl
 import kr.jhp.purchtrac.domain.repository.MemoRepository
 import kr.jhp.purchtrac.domain.repository.MemoRepositoryImpl
 import kr.jhp.purchtrac.domain.repository.UserRepository
@@ -22,15 +24,10 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
 
-//    @Binds
-//    @Singleton
-//    abstract fun bindProductRepository(productRepositoryImpl: ProductRepositoryImpl): ProductRepository
-//
-//    @Binds
-//    @Singleton
-//    abstract fun bindAccountRepository(accountRepositoryImpl: AccountRepositoryImpl): AccountRepository
-//
-//    @Binds
-//    @Singleton
-//    abstract fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+    @Binds
+    @Singleton
+    abstract fun bindAccountRepository(accountRepositoryImpl: AccountRepositoryImpl): AccountRepository
+
+
+
 }

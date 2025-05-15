@@ -157,8 +157,6 @@ dependencies {
     implementation(libs.work.runtime.ktx)
 
     // 보안 관련 라이브러리
-    // 데이터 암호화를 위한 라이브러리
-    implementation(libs.security.crypto)
     // 생체 인증 기능
     implementation(libs.biometric)
 
