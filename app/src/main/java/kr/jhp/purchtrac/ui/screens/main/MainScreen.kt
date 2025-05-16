@@ -17,6 +17,8 @@ import kr.jhp.purchtrac.ui.screens.account.detail.AccountDetailScreen
 import kr.jhp.purchtrac.ui.screens.account.list.AccountListScreen
 import kr.jhp.purchtrac.ui.screens.memo.detail.MemoDetailScreen
 import kr.jhp.purchtrac.ui.screens.memo.list.MemoListScreen
+import kr.jhp.purchtrac.ui.screens.product.detail.ProductDetailScreen
+import kr.jhp.purchtrac.ui.screens.product.list.ProductListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,13 +102,13 @@ fun MainScreen() {
 
             // 예약 구매 목록 화면
             composable(Screen.ProductList.route) {
-//                ProductListScreen(
-//                    navigateToProductDetail = { productId ->
-//                        navController.navigate(
-//                            Screen.ProductDetail.createRoute(productId ?: -1L)
-//                        )
-//                    }
-//                )
+                ProductListScreen(
+                    navigateToProductDetail = { productId ->
+                        navController.navigate(
+                            Screen.ProductDetail.createRoute(productId ?: -1L)
+                        )
+                    }
+                )
             }
 
             // 예약 구매 상세 화면
@@ -117,10 +119,10 @@ fun MainScreen() {
                 )
             ) { backStackEntry ->
                 val productId = backStackEntry.arguments?.getLong("productId") ?: -1L
-//                ProductDetailScreen(
-//                    productId = if (productId == -1L) null else productId,
-//                    navigateBack = { navController.popBackStack() }
-//                )
+                ProductDetailScreen(
+                    productId = if (productId == -1L) null else productId,
+                    navigateBack = { navController.popBackStack() }
+                )
             }
 
             // 계정 목록 화면

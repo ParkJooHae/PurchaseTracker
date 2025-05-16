@@ -8,6 +8,8 @@ import kr.jhp.purchtrac.domain.repository.AccountRepository
 import kr.jhp.purchtrac.domain.repository.AccountRepositoryImpl
 import kr.jhp.purchtrac.domain.repository.MemoRepository
 import kr.jhp.purchtrac.domain.repository.MemoRepositoryImpl
+import kr.jhp.purchtrac.domain.repository.ProductRepository
+import kr.jhp.purchtrac.domain.repository.ProductRepositoryImpl
 import kr.jhp.purchtrac.domain.repository.UserRepository
 import kr.jhp.purchtrac.domain.repository.UserRepositoryImpl
 import javax.inject.Singleton
@@ -28,6 +30,9 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindAccountRepository(accountRepositoryImpl: AccountRepositoryImpl): AccountRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindProductRepository(productRepositoryImpl: ProductRepositoryImpl): ProductRepository
 
 
 }
