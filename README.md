@@ -2,6 +2,8 @@
 
 ## 간단한 메모 앱 
 
+Compose를 사용하여 간단한 앱을 개발해보자.
+
 UI 레이어
 * Jetpack Compose : 선언적 UI 구현
 * Material 3 : 디자인 시스템 적용
