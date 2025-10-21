@@ -18,6 +18,7 @@ import kr.jhp.purchtrac.domain.model.ProductStatus
 import kr.jhp.purchtrac.domain.usecase.product.DeleteProductUseCase
 import kr.jhp.purchtrac.domain.usecase.product.GetProductsUseCase
 import kr.jhp.purchtrac.domain.usecase.product.ToggleProductReminderUseCase
+import kr.jhp.purchtrac.domain.usecase.user.GetAllUsersUseCase
 import kr.jhp.purchtrac.ui.state.product.ProductEvent
 import kr.jhp.purchtrac.ui.state.product.ProductIntent
 import kr.jhp.purchtrac.ui.state.product.ProductState
@@ -27,7 +28,8 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val deleteProductUseCase: DeleteProductUseCase,
-    private val toggleProductReminderUseCase: ToggleProductReminderUseCase
+    private val toggleProductReminderUseCase: ToggleProductReminderUseCase,
+    private val getAllUsersUseCase: GetAllUsersUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProductState())
@@ -37,18 +39,21 @@ class ProductViewModel @Inject constructor(
     val event: SharedFlow<ProductEvent> = _event.asSharedFlow()
 
     init {
+        processIntent(ProductIntent.LoadUsers)
         processIntent(ProductIntent.LoadProducts)
     }
 
     fun processIntent(intent: ProductIntent) {
         when (intent) {
             is ProductIntent.LoadProducts -> loadProducts()
+            is ProductIntent.LoadUsers -> loadUsers()
             is ProductIntent.SearchProducts -> searchProducts(intent.query)
             is ProductIntent.FilterProductsByStatus -> filterByStatus(intent.status)
             is ProductIntent.DeleteProduct -> deleteProduct(intent.productId)
             is ProductIntent.ToggleReminderEnabled -> toggleReminder(intent.productId)
             is ProductIntent.ClearSearchQuery -> clearSearchQuery()
             is ProductIntent.UpdateProduct -> updateProductList(intent.product)
+            is ProductIntent.SelectUser -> selectUser(intent.userId)
         }
     }
 
@@ -130,19 +135,49 @@ class ProductViewModel @Inject constructor(
         applyFilters()
     }
 
+    private fun loadUsers() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoadingUsers = true) }
+            getAllUsersUseCase().catch { e ->
+                val userMessage = ErrorHandler.getUserMessage(e)
+                _state.update { state ->
+                    state.copy(
+                        isLoadingUsers = false,
+                        error = userMessage
+                    )
+                }
+            }.collect { users ->
+                _state.update { state ->
+                    state.copy(
+                        allUsers = users,
+                        isLoadingUsers = false,
+                        error = null
+                    )
+                }
+            }
+        }
+    }
+
+    private fun selectUser(userId: Long) {
+        _state.update { it.copy(currentUserId = userId) }
+        applyFilters()
+    }
+
     private fun applyFilters() {
         val state = _state.value
-        val filteredList = state.products.filter { product ->
-            // 검색어 필터
-            val matchesSearch = state.searchQuery.isEmpty() ||
-                    product.name.contains(state.searchQuery, ignoreCase = true) ||
-                    product.siteName.contains(state.searchQuery, ignoreCase = true)
+        val filteredList = state.products
+            .filter { product -> product.userId == state.currentUserId }
+            .filter { product ->
+                // 검색어 필터
+                val matchesSearch = state.searchQuery.isEmpty() ||
+                        product.name.contains(state.searchQuery, ignoreCase = true) ||
+                        product.siteName.contains(state.searchQuery, ignoreCase = true)
 
-            // 상태 필터
-            val matchesStatus = state.selectedStatus == null || product.status == state.selectedStatus
+                // 상태 필터
+                val matchesStatus = state.selectedStatus == null || product.status == state.selectedStatus
 
-            matchesSearch && matchesStatus
-        }
+                matchesSearch && matchesStatus
+            }
 
         _state.update { it.copy(filteredProducts = filteredList) }
     }

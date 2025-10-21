@@ -17,6 +17,7 @@ import kr.jhp.purchtrac.domain.model.Memo
 import kr.jhp.purchtrac.domain.usecase.memo.DeleteMemoUseCase
 import kr.jhp.purchtrac.domain.usecase.memo.GetMemosUseCase
 import kr.jhp.purchtrac.domain.usecase.memo.ToggleMemoImportanceUseCase
+import kr.jhp.purchtrac.domain.usecase.user.GetAllUsersUseCase
 import kr.jhp.purchtrac.ui.state.memo.MemoEvent
 import kr.jhp.purchtrac.ui.state.memo.MemoIntent
 import kr.jhp.purchtrac.ui.state.memo.MemoState
@@ -26,7 +27,8 @@ import javax.inject.Inject
 class MemoViewModel @Inject constructor(
     private val getMemosUseCase: GetMemosUseCase,
     private val deleteMemoUseCase: DeleteMemoUseCase,
-    private val toggleMemoImportanceUseCase: ToggleMemoImportanceUseCase
+    private val toggleMemoImportanceUseCase: ToggleMemoImportanceUseCase,
+    private val getAllUsersUseCase: GetAllUsersUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MemoState())
@@ -36,18 +38,21 @@ class MemoViewModel @Inject constructor(
     val event: SharedFlow<MemoEvent> = _event.asSharedFlow()
 
     init {
+        processIntent(MemoIntent.LoadUsers)
         processIntent(MemoIntent.LoadMemos)
     }
 
     fun processIntent(intent: MemoIntent) {
         when (intent) {
             is MemoIntent.LoadMemos -> loadMemos()
+            is MemoIntent.LoadUsers -> loadUsers()
             is MemoIntent.SearchMemos -> searchMemos(intent.query)
             is MemoIntent.ToggleImportant -> toggleImportant(intent.memoId)
             is MemoIntent.DeleteMemo -> deleteMemo(intent.memoId)
             is MemoIntent.SetFilterImportant -> filterImportant(intent.showOnlyImportant)
             is MemoIntent.ClearSearchQuery -> clearSearchQuery()
             is MemoIntent.UpdateMemo -> updateMemosList(intent.memo)
+            is MemoIntent.SelectUser -> selectUser(intent.userId)
         }
     }
 
@@ -129,19 +134,49 @@ class MemoViewModel @Inject constructor(
         applyFilters()
     }
 
+    private fun loadUsers() {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoadingUsers = true) }
+            getAllUsersUseCase().catch { e ->
+                val userMessage = ErrorHandler.getUserMessage(e)
+                _state.update { state ->
+                    state.copy(
+                        isLoadingUsers = false,
+                        error = userMessage
+                    )
+                }
+            }.collect { users ->
+                _state.update { state ->
+                    state.copy(
+                        allUsers = users,
+                        isLoadingUsers = false,
+                        error = null
+                    )
+                }
+            }
+        }
+    }
+
+    private fun selectUser(userId: Long) {
+        _state.update { it.copy(currentUserId = userId) }
+        applyFilters()
+    }
+
     private fun applyFilters() {
         val state = _state.value
-        val filteredList = state.memos.filter { memo ->
-            // 검색어 필터
-            val matchesSearch = state.searchQuery.isEmpty() ||
-                    memo.title.contains(state.searchQuery, ignoreCase = true) ||
-                    memo.content.contains(state.searchQuery, ignoreCase = true)
+        val filteredList = state.memos
+            .filter { memo -> memo.userId == state.currentUserId }
+            .filter { memo ->
+                // 검색어 필터
+                val matchesSearch = state.searchQuery.isEmpty() ||
+                        memo.title.contains(state.searchQuery, ignoreCase = true) ||
+                        memo.content.contains(state.searchQuery, ignoreCase = true)
 
-            // 중요 메모 필터
-            val matchesImportant = !state.showOnlyImportant || memo.isImportant
+                // 중요 메모 필터
+                val matchesImportant = !state.showOnlyImportant || memo.isImportant
 
-            matchesSearch && matchesImportant
-        }
+                matchesSearch && matchesImportant
+            }
 
         _state.update { it.copy(filteredMemos = filteredList) }
     }

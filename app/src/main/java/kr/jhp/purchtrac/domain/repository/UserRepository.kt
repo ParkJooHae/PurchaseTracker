@@ -9,6 +9,7 @@ interface UserRepository {
     fun getUsersByType(type: UserType): Flow<List<User>>
     suspend fun getUserById(id: Long): User?
     suspend fun insertUser(user: User): Long
+    suspend fun createUser(user: User): Long
     suspend fun updateUser(user: User)
     suspend fun deleteUser(userId: Long)
 }

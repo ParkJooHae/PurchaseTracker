@@ -1,5 +1,6 @@
 # PurchaseTracker
 
+점점 늘어나는 부모님의 계정을 쉽게 관리하기 위해 개발한 앱입니다. 
 Jetpack Compose와 Clean Architecture를 활용하여 메모, 예약 구매, 계정 정보를 안전하게 관리합니다.
 
 ---

@@ -33,6 +33,10 @@ class UserRepositoryImpl @Inject constructor(
         return userDao.insertUser(user.toEntity())
     }
 
+    override suspend fun createUser(user: User): Long {
+        return userDao.insertUser(user.toEntity())
+    }
+
     override suspend fun updateUser(user: User) {
         userDao.updateUser(user.toEntity())
     }

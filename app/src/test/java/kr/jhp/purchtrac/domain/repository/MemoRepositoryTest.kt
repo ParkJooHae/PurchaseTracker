@@ -4,9 +4,8 @@ import kr.jhp.purchtrac.domain.error.PurchaseTrackerException
 import kr.jhp.purchtrac.domain.model.Memo
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 
 /**
  * Unit tests for MemoRepository

@@ -1,8 +1,10 @@
 package kr.jhp.purchtrac.ui.screens.account.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kr.jhp.purchtrac.domain.model.Account
+import kr.jhp.purchtrac.domain.model.User
 import kr.jhp.purchtrac.ui.components.EmptyContentView
 import kr.jhp.purchtrac.ui.state.account.AccountEvent
 import kr.jhp.purchtrac.ui.state.account.AccountIntent
@@ -29,6 +32,7 @@ fun AccountListScreen(
     val state by viewModel.state.collectAsState()
     var showSearchBar by remember { mutableStateOf(false) }
     var searchActive by rememberSaveable { mutableStateOf(false) }
+    var showAddUserDialog by remember { mutableStateOf(false) }
 
     // 이벤트 처리
     LaunchedEffect(key1 = true) {
@@ -50,6 +54,13 @@ fun AccountListScreen(
             TopAppBar(
                 title = { Text("계정") },
                 actions = {
+                    // 사용자 추가 버튼
+                    IconButton(onClick = { showAddUserDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.PersonAdd,
+                            contentDescription = "Add User"
+                        )
+                    }
                     // 검색 아이콘
                     IconButton(onClick = { showSearchBar = !showSearchBar }) {
                         Icon(
@@ -73,6 +84,15 @@ fun AccountListScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            // 사용자 탭 행
+            UserTabRow(
+                users = state.allUsers,
+                currentUserId = state.currentUserId,
+                onUserSelect = { userId ->
+                    viewModel.processIntent(AccountIntent.SelectUser(userId))
+                }
+            )
+
             // 검색 바
             if (showSearchBar) {
                 SearchBar(
@@ -150,6 +170,117 @@ fun AccountListScreen(
             }
         }
     }
+
+    // 사용자 추가 다이얼로그
+    if (showAddUserDialog) {
+        AddUserDialog(
+            onConfirm = { name ->
+                viewModel.processIntent(AccountIntent.CreateUser(name))
+                showAddUserDialog = false
+            },
+            onDismiss = {
+                showAddUserDialog = false
+            }
+        )
+    }
+}
+
+@Composable
+fun UserTabRow(
+    users: List<User>,
+    currentUserId: Long,
+    onUserSelect: (Long) -> Unit
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        items(
+            items = users,
+            key = { it.id }
+        ) { user ->
+            UserTabButton(
+                user = user,
+                isSelected = user.id == currentUserId,
+                onClick = { onUserSelect(user.id) }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UserTabButton(
+    user: User,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    if (isSelected) {
+        FilterChip(
+            selected = true,
+            onClick = onClick,
+            label = { Text(user.name) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Selected",
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+            }
+        )
+    } else {
+        FilterChip(
+            selected = false,
+            onClick = onClick,
+            label = { Text(user.name) }
+        )
+    }
+}
+
+@Composable
+fun AddUserDialog(
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var userName by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("새로운 사용자 추가") },
+        text = {
+            Column {
+                Text("사용자의 이름을 입력하세요", style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    value = userName,
+                    onValueChange = { userName = it },
+                    label = { Text("사용자 이름") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (userName.isNotBlank()) {
+                        onConfirm(userName)
+                    }
+                },
+                enabled = userName.isNotBlank()
+            ) {
+                Text("추가")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("취소")
+            }
+        }
+    )
 }
 
 @Composable
