@@ -21,15 +21,15 @@ Jetpack Compose와 Clean Architecture를 활용하여 메모, 예약 구매, 계
 - 가격, 사이트명, 구매처 정보 관리
 제품명/사이트명 검색 및 상태별 필터링
 
-### 3️⃣ 계정 정보 관리 (Account)
-- 🔐 웹사이트 계정 정보 안전 저장
-- 🛡️ 비밀번호 암호화 저장 (EncryptedSharedPreferences)
-- 📌 사이트명, 사용자명, URL, 노트 저장
-- 🔍 사이트명/사용자명/URL 다중 검색
+### 계정 정보 관리 (Account)
+- 웹사이트 계정 정보 안전 저장
+- 비밀번호 암호화 저장 (EncryptedSharedPreferences)
+- 사이트명, 사용자명, URL, 노트 저장
+- 사이트명/사용자명/URL 다중 검색
 
-### 4️⃣ 다중 사용자 지원
-- 👥 사용자 프로필 지원: 나, 어머니, 아버지
-- 🔄 사용자별 데이터 완전 분리
+###  다중 사용자 지원
+- 사용자 프로필 지원: 나, 어머니, 아버지
+- 사용자별 데이터 완전 분리
 
 ---
 
@@ -92,7 +92,7 @@ Jetpack Compose와 Clean Architecture를 활용하여 메모, 예약 구매, 계
 
 ## 🧪 테스트 커버리지
 
-### ✅ Unit Tests (단위 테스트)
+### Unit Tests (단위 테스트)
 - **ErrorHandler Tests**: 에러 핸들링 및 사용자 메시지 매핑
 - **MemoRepository Tests**: 메모 모델 및 로직
 - **ProductRepository Tests**: 상품 상태 전환 및 필터링
@@ -104,7 +104,7 @@ Jetpack Compose와 Clean Architecture를 활용하여 메모, 예약 구매, 계
 - 필터링 및 검색 기능
 - 데이터 모델 구조
 
-### ✅ Integration Tests (통합 테스트)
+### Integration Tests (통합 테스트)
 - **MemoViewModelIntegrationTest**: 메모 로딩, 필터링, 검색
 - **ProductViewModelIntegrationTest**: 상태 전환, 알림, 필터링
 - **AccountViewModelIntegrationTest**: 생성, 검색, 업데이트, 삭제
@@ -114,7 +114,7 @@ Jetpack Compose와 Clean Architecture를 활용하여 메모, 예약 구매, 계
 - 상태 관리 일관성
 - UI 상태 동기화
 
-### 🔄 테스트 실행
+### 테스트 실행
 ```bash
 # Unit Tests
 ./gradlew test
