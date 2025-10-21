@@ -1,6 +1,5 @@
 # PurchaseTracker
 
-모던 안드로이드 개발 패턴을 적용한 **포트폴리오급 다목적 관리 앱**.
 Jetpack Compose와 Clean Architecture를 활용하여 메모, 예약 구매, 계정 정보를 안전하게 관리합니다.
 
 ---
