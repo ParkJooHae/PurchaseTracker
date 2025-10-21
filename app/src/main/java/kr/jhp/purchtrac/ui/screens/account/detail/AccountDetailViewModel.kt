@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kr.jhp.purchtrac.domain.error.ErrorHandler
 import kr.jhp.purchtrac.domain.model.Account
 import kr.jhp.purchtrac.domain.usecase.account.DeleteAccountUseCase
 import kr.jhp.purchtrac.domain.usecase.account.GetAccountByIdUseCase
@@ -95,11 +96,12 @@ class AccountDetailViewModel @Inject constructor(
                     _event.emit(AccountDetailEvent.ShowToast("계정을 찾을 수 없습니다"))
                 }
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isLoading = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(AccountDetailEvent.ShowToast("오류가 발생했습니다: ${e.message}"))
+                _event.emit(AccountDetailEvent.ShowToast(userMessage))
             }
         }
     }
@@ -160,11 +162,12 @@ class AccountDetailViewModel @Inject constructor(
                 _event.emit(AccountDetailEvent.ShowToast("계정이 저장되었습니다"))
                 _event.emit(AccountDetailEvent.NavigateBack)
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isSaving = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(AccountDetailEvent.ShowToast("저장 중 오류가 발생했습니다: ${e.message}"))
+                _event.emit(AccountDetailEvent.ShowToast(userMessage))
             }
         }
     }
@@ -182,11 +185,12 @@ class AccountDetailViewModel @Inject constructor(
                 _event.emit(AccountDetailEvent.ShowToast("계정이 삭제되었습니다"))
                 _event.emit(AccountDetailEvent.NavigateBack)
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isLoading = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(AccountDetailEvent.ShowToast("삭제 중 오류가 발생했습니다: ${e.message}"))
+                _event.emit(AccountDetailEvent.ShowToast(userMessage))
             }
         }
     }

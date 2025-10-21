@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kr.jhp.purchtrac.domain.error.ErrorHandler
 import kr.jhp.purchtrac.domain.model.Product
 import kr.jhp.purchtrac.domain.model.ProductStatus
 import kr.jhp.purchtrac.domain.usecase.product.DeleteProductUseCase
@@ -109,11 +110,12 @@ class ProductDetailViewModel @Inject constructor(
                     _event.emit(ProductDetailEvent.ShowToast("상품을 찾을 수 없습니다"))
                 }
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isLoading = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(ProductDetailEvent.ShowToast("오류가 발생했습니다: ${e.message}"))
+                _event.emit(ProductDetailEvent.ShowToast(userMessage))
             }
         }
     }
@@ -211,11 +213,12 @@ class ProductDetailViewModel @Inject constructor(
                 _event.emit(ProductDetailEvent.ShowToast("상품이 저장되었습니다"))
                 _event.emit(ProductDetailEvent.NavigateBack)
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isSaving = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(ProductDetailEvent.ShowToast("저장 중 오류가 발생했습니다: ${e.message}"))
+                _event.emit(ProductDetailEvent.ShowToast(userMessage))
             }
         }
     }
@@ -233,11 +236,12 @@ class ProductDetailViewModel @Inject constructor(
                 _event.emit(ProductDetailEvent.ShowToast("상품이 삭제되었습니다"))
                 _event.emit(ProductDetailEvent.NavigateBack)
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isLoading = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(ProductDetailEvent.ShowToast("삭제 중 오류가 발생했습니다: ${e.message}"))
+                _event.emit(ProductDetailEvent.ShowToast(userMessage))
             }
         }
     }

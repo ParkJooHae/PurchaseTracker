@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kr.jhp.purchtrac.domain.error.ErrorHandler
 import kr.jhp.purchtrac.domain.model.Account
 import kr.jhp.purchtrac.domain.usecase.account.DeleteAccountUseCase
 import kr.jhp.purchtrac.domain.usecase.account.GetAccountsUseCase
@@ -50,10 +51,11 @@ class AccountViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             getAccountsUseCase().catch { e ->
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { state ->
                     state.copy(
                         isLoading = false,
-                        error = e.message ?: "Unknown error occurred"
+                        error = userMessage
                     )
                 }
             }.collect { accounts ->
@@ -81,7 +83,8 @@ class AccountViewModel @Inject constructor(
                 deleteAccountUseCase(accountId)
                 _event.emit(AccountEvent.ShowToast("계정이 삭제되었습니다"))
             } catch (e: Exception) {
-                _event.emit(AccountEvent.ShowToast("삭제 중 오류가 발생했습니다: ${e.message}"))
+                val userMessage = ErrorHandler.getUserMessage(e)
+                _event.emit(AccountEvent.ShowToast(userMessage))
             }
         }
     }

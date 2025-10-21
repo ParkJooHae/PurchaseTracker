@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kr.jhp.purchtrac.domain.error.ErrorHandler
+import kr.jhp.purchtrac.domain.error.PurchaseTrackerException
 import kr.jhp.purchtrac.domain.model.Memo
 import kr.jhp.purchtrac.domain.usecase.memo.DeleteMemoUseCase
 import kr.jhp.purchtrac.domain.usecase.memo.GetMemoByIdUseCase
@@ -91,11 +93,12 @@ class MemoDetailViewModel @Inject constructor(
                     _event.emit(MemoDetailEvent.ShowToast("메모를 찾을 수 없습니다"))
                 }
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isLoading = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(MemoDetailEvent.ShowToast("오류가 발생했습니다: ${e.message}"))
+                _event.emit(MemoDetailEvent.ShowToast(userMessage))
             }
         }
     }
@@ -150,11 +153,12 @@ class MemoDetailViewModel @Inject constructor(
                 _event.emit(MemoDetailEvent.ShowToast("메모가 저장되었습니다"))
                 _event.emit(MemoDetailEvent.NavigateBack)
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isSaving = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(MemoDetailEvent.ShowToast("저장 중 오류가 발생했습니다: ${e.message}"))
+                _event.emit(MemoDetailEvent.ShowToast(userMessage))
             }
         }
     }
@@ -172,11 +176,12 @@ class MemoDetailViewModel @Inject constructor(
                 _event.emit(MemoDetailEvent.ShowToast("메모가 삭제되었습니다"))
                 _event.emit(MemoDetailEvent.NavigateBack)
             } catch (e: Exception) {
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { it.copy(
                     isLoading = false,
-                    error = e.message
+                    error = userMessage
                 ) }
-                _event.emit(MemoDetailEvent.ShowToast("삭제 중 오류가 발생했습니다: ${e.message}"))
+                _event.emit(MemoDetailEvent.ShowToast(userMessage))
             }
         }
     }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kr.jhp.purchtrac.domain.error.ErrorHandler
 import kr.jhp.purchtrac.domain.model.Memo
 import kr.jhp.purchtrac.domain.usecase.memo.DeleteMemoUseCase
 import kr.jhp.purchtrac.domain.usecase.memo.GetMemosUseCase
@@ -54,10 +55,11 @@ class MemoViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             getMemosUseCase().catch { e ->
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { state ->
                     state.copy(
                         isLoading = false,
-                        error = e.message ?: "Unknown error occurred"
+                        error = userMessage
                     )
                 }
             }.collect { memos ->
@@ -85,7 +87,8 @@ class MemoViewModel @Inject constructor(
                 toggleMemoImportanceUseCase(memoId)
                 _event.emit(MemoEvent.ShowToast("메모 중요도를 변경했습니다"))
             } catch (e: Exception) {
-                _event.emit(MemoEvent.ShowToast("오류가 발생했습니다: ${e.message}"))
+                val userMessage = ErrorHandler.getUserMessage(e)
+                _event.emit(MemoEvent.ShowToast(userMessage))
             }
         }
     }
@@ -96,7 +99,8 @@ class MemoViewModel @Inject constructor(
                 deleteMemoUseCase(memoId)
                 _event.emit(MemoEvent.ShowToast("메모가 삭제되었습니다"))
             } catch (e: Exception) {
-                _event.emit(MemoEvent.ShowToast("삭제 중 오류가 발생했습니다: ${e.message}"))
+                val userMessage = ErrorHandler.getUserMessage(e)
+                _event.emit(MemoEvent.ShowToast(userMessage))
             }
         }
     }

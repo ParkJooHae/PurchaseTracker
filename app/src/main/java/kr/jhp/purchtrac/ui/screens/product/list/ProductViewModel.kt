@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kr.jhp.purchtrac.domain.error.ErrorHandler
 import kr.jhp.purchtrac.domain.model.Product
 import kr.jhp.purchtrac.domain.model.ProductStatus
 import kr.jhp.purchtrac.domain.usecase.product.DeleteProductUseCase
@@ -55,10 +56,11 @@ class ProductViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             getProductsUseCase().catch { e ->
+                val userMessage = ErrorHandler.getUserMessage(e)
                 _state.update { state ->
                     state.copy(
                         isLoading = false,
-                        error = e.message ?: "Unknown error occurred"
+                        error = userMessage
                     )
                 }
             }.collect { products ->
@@ -91,7 +93,8 @@ class ProductViewModel @Inject constructor(
                 deleteProductUseCase(productId)
                 _event.emit(ProductEvent.ShowToast("상품이 삭제되었습니다"))
             } catch (e: Exception) {
-                _event.emit(ProductEvent.ShowToast("삭제 중 오류가 발생했습니다: ${e.message}"))
+                val userMessage = ErrorHandler.getUserMessage(e)
+                _event.emit(ProductEvent.ShowToast(userMessage))
             }
         }
     }
@@ -102,7 +105,8 @@ class ProductViewModel @Inject constructor(
                 toggleProductReminderUseCase(productId)
                 _event.emit(ProductEvent.ShowToast("알림 설정이 변경되었습니다"))
             } catch (e: Exception) {
-                _event.emit(ProductEvent.ShowToast("알림 설정 변경 중 오류가 발생했습니다: ${e.message}"))
+                val userMessage = ErrorHandler.getUserMessage(e)
+                _event.emit(ProductEvent.ShowToast(userMessage))
             }
         }
     }
